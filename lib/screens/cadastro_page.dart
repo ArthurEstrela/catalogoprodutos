@@ -57,6 +57,7 @@ class _CadastroPageState extends State<CadastroPage> {
               // Campo do nome
               TextFormField(
                 controller: _nomeController,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                   labelText: 'Nome do produto',
                   border: OutlineInputBorder(),
