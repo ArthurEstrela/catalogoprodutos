@@ -1,17 +1,52 @@
-# catalogoprodutos
+# Catálogo de Produtos
 
-A new Flutter project.
+Aplicativo feito em Flutter para a **Atividade 5: Lista**.
 
-## Getting Started
+O app mostra uma lista de produtos e permite cadastrar novos produtos, que são adicionados ao catálogo na hora.
 
-This project is a starting point for a Flutter application.
+## Funcionalidades
 
-A few resources to get you started if this is your first Flutter project:
+- Lista de produtos usando `List` e `ListView.builder`
+- Cada produto aparece em um `Card` com:
+  - ícone da categoria
+  - nome
+  - preço
+  - botão **Comprar**
+- `FloatingActionButton` que abre a tela **Cadastrar Produto**
+- Cadastro com nome, preço e categoria (escolhida em um `DropdownButton`)
+- O novo produto é adicionado à lista sem apagar os que já existem
+- Ao clicar em um produto (ou no botão Comprar), aparece um `SnackBar` avisando que ele foi adicionado ao carrinho
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Categorias
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Categoria   | Ícone           |
+|-------------|-----------------|
+| Eletrônicos | `devices`       |
+| Roupas      | `checkroom`     |
+| Alimentos   | `fastfood`      |
+| Livros      | `menu_book`     |
+| Esportes    | `sports_soccer` |
+| Brinquedos  | `toys`          |
+
+## Estrutura
+
+```
+lib/
+├── main.dart                 # inicia o app
+├── models/
+│   └── produto.dart          # classe Produto, categorias e ícones
+└── screens/
+    ├── home_page.dart        # tela principal com a lista
+    └── cadastro_page.dart    # tela de cadastro
+```
+
+## Como executar
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Autor
+
+Arthur Estrela
