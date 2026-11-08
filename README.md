@@ -1,6 +1,8 @@
 # Catálogo de Produtos
 
-Aplicativo feito em Flutter que mostra uma lista de produtos e permite cadastrar novos produtos, atualizando dinamicamente o catálogo.
+Aplicativo feito em Flutter para as **Atividades 5 e 6: Lista, Formulário e Validação**.
+
+O app mostra uma lista de produtos e permite cadastrar novos produtos com validação de formulário, atualizando dinamicamente o catálogo.
 
 ## Funcionalidades
 
