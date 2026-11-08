@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:catalogoprodutos/main.dart';
 
 void main() {
-  testWidgets('Cadastra um produto e mostra o SnackBar', (tester) async {
+  testWidgets('Valida os campos do Form, cadastra um produto e mostra o SnackBar',
+      (tester) async {
     await tester.pumpWidget(const MyApp());
 
     // A tela principal mostra os produtos iniciais
@@ -21,10 +22,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Cadastrar Produto'), findsOneWidget);
 
-    // Preenche os campos e cadastra
+    // Tenta cadastrar sem preencher nada para testar a validação do Form
+    await tester.tap(find.text('Cadastrar'));
+    await tester.pump();
+    expect(find.text('Informe o nome do produto'), findsOneWidget);
+    expect(find.text('Informe o preço do produto'), findsOneWidget);
+    expect(find.text('Selecione uma categoria para o produto'), findsOneWidget);
+
+    // Preenche os campos corretamente e cadastra
     await tester.enterText(find.byType(TextFormField).at(0), 'Boneca');
     await tester.enterText(find.byType(TextFormField).at(1), '45,00');
-    await tester.tap(find.text('Eletrônicos'));
+    await tester.tap(find.byType(DropdownButton<String>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Brinquedos').last);
     await tester.pumpAndSettle();

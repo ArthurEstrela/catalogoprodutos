@@ -1,8 +1,6 @@
 # Catálogo de Produtos
 
-Aplicativo feito em Flutter para a **Atividade 5: Lista**.
-
-O app mostra uma lista de produtos e permite cadastrar novos produtos, que são adicionados ao catálogo na hora.
+Aplicativo feito em Flutter que mostra uma lista de produtos e permite cadastrar novos produtos, atualizando dinamicamente o catálogo.
 
 ## Funcionalidades
 
@@ -14,7 +12,11 @@ O app mostra uma lista de produtos e permite cadastrar novos produtos, que são 
   - botão **Comprar**
 - `FloatingActionButton` que abre a tela **Cadastrar Produto**
 - Cadastro com nome, preço e categoria (escolhida em um `DropdownButton`)
-- O novo produto é adicionado à lista sem apagar os que já existem
+- Validação de todos os campos através do widget `Form`, exibindo mensagens de erro em cada campo e um aviso caso algum campo não seja validado:
+  - **Nome**: obrigatório, mínimo de 3 caracteres e não pode conter apenas números
+  - **Preço**: obrigatório, valor numérico válido e maior que zero
+  - **Categoria**: seleção obrigatória de uma categoria válida no `DropdownButton`
+- O novo produto é adicionado à lista sem substituir os que já existem
 - Ao clicar em um produto (ou no botão Comprar), aparece um `SnackBar` avisando que ele foi adicionado ao carrinho
 
 ## Categorias
@@ -37,7 +39,7 @@ lib/
 │   └── produto.dart          # classe Produto, categorias e ícones
 └── screens/
     ├── home_page.dart        # tela principal com a lista
-    └── cadastro_page.dart    # tela de cadastro
+    └── cadastro_page.dart    # tela de cadastro com validação via Form
 ```
 
 ## Como executar

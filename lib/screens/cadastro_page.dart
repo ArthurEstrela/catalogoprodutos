@@ -14,8 +14,8 @@ class _CadastroPageState extends State<CadastroPage> {
   final _nomeController = TextEditingController();
   final _precoController = TextEditingController();
 
-  // Categoria escolhida no DropdownButton (começa com a primeira)
-  String _categoriaSelecionada = categorias[0];
+  // Categoria escolhida no DropdownButton (começa nula para obrigar a seleção)
+  String? _categoriaSelecionada;
 
   @override
   void dispose() {
@@ -25,7 +25,7 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   void _salvar() {
-    // Só continua se os campos estiverem válidos
+    // Valida todos os campos do Form aplicando as regras de cada um
     if (_formKey.currentState!.validate()) {
       // Troca vírgula por ponto para o double.parse funcionar (ex: 10,50)
       final preco = double.parse(_precoController.text.replaceAll(',', '.'));
@@ -33,11 +33,21 @@ class _CadastroPageState extends State<CadastroPage> {
       final novoProduto = Produto(
         nome: _nomeController.text.trim(),
         preco: preco,
-        categoria: _categoriaSelecionada,
+        categoria: _categoriaSelecionada!,
       );
 
       // Volta para a tela principal levando o novo produto
       Navigator.pop(context, novoProduto);
+    } else {
+      // Mostra um aviso caso algum campo não tenha passado na validação
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preencha todos os campos corretamente para cadastrar!'),
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -54,7 +64,7 @@ class _CadastroPageState extends State<CadastroPage> {
           key: _formKey,
           child: ListView(
             children: [
-              // Campo do nome
+              // Campo do nome com conjunto de regras de validação
               TextFormField(
                 controller: _nomeController,
                 textCapitalization: TextCapitalization.sentences,
@@ -64,15 +74,22 @@ class _CadastroPageState extends State<CadastroPage> {
                   prefixIcon: Icon(Icons.label),
                 ),
                 validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
+                  final texto = valor?.trim() ?? '';
+                  if (texto.isEmpty) {
                     return 'Informe o nome do produto';
+                  }
+                  if (texto.length < 3) {
+                    return 'O nome deve ter pelo menos 3 caracteres';
+                  }
+                  if (double.tryParse(texto) != null) {
+                    return 'O nome não pode conter apenas números';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
 
-              // Campo do preço
+              // Campo do preço com conjunto de regras de validação
               TextFormField(
                 controller: _precoController,
                 keyboardType:
@@ -84,40 +101,69 @@ class _CadastroPageState extends State<CadastroPage> {
                   prefixIcon: Icon(Icons.attach_money),
                 ),
                 validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o preço';
+                  final texto = valor?.trim() ?? '';
+                  if (texto.isEmpty) {
+                    return 'Informe o preço do produto';
                   }
-                  final preco = double.tryParse(valor.replaceAll(',', '.'));
-                  if (preco == null || preco <= 0) {
-                    return 'Digite um preço válido';
+                  final preco = double.tryParse(texto.replaceAll(',', '.'));
+                  if (preco == null) {
+                    return 'Digite um valor numérico válido (ex: 19,90)';
+                  }
+                  if (preco <= 0) {
+                    return 'O preço deve ser maior que zero';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
 
-              // Seleção da categoria com DropdownButton
-              const Text('Categoria', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 4),
-              DropdownButton<String>(
-                value: _categoriaSelecionada,
-                isExpanded: true,
-                items: categorias.map((categoria) {
-                  return DropdownMenuItem<String>(
-                    value: categoria,
-                    child: Row(
-                      children: [
-                        Icon(iconeDaCategoria(categoria)),
-                        const SizedBox(width: 10),
-                        Text(categoria),
-                      ],
+              // Seleção da categoria com DropdownButton validado pelo Form
+              FormField<String>(
+                initialValue: _categoriaSelecionada,
+                validator: (valor) {
+                  if (valor == null || valor.isEmpty) {
+                    return 'Selecione uma categoria para o produto';
+                  }
+                  if (!categorias.contains(valor)) {
+                    return 'Categoria inválida';
+                  }
+                  return null;
+                },
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'Categoria',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.category),
+                      errorText: state.errorText,
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _categoriaSelecionada,
+                        hint: const Text('Selecione uma categoria'),
+                        isExpanded: true,
+                        isDense: true,
+                        items: categorias.map((categoria) {
+                          return DropdownMenuItem<String>(
+                            value: categoria,
+                            child: Row(
+                              children: [
+                                Icon(iconeDaCategoria(categoria)),
+                                const SizedBox(width: 10),
+                                Text(categoria),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (novoValor) {
+                          setState(() {
+                            _categoriaSelecionada = novoValor;
+                          });
+                          state.didChange(novoValor);
+                        },
+                      ),
                     ),
                   );
-                }).toList(),
-                onChanged: (novoValor) {
-                  setState(() {
-                    _categoriaSelecionada = novoValor!;
-                  });
                 },
               ),
               const SizedBox(height: 24),
